@@ -4,11 +4,9 @@ from discord import Intents, Client, Message, User
 from dotenv import load_dotenv
 from bot_response import get_bot_response
 
-
-TARGET_USER: Final[str] = "wonoppa_"
-
 load_dotenv()
 TOKEN: Final[str] = os.getenv("DISCORD_TOKEN")
+TARGET_USER: Final[str] = os.getenv("TARGET_USER")
 
 intents: Intents = Intents.default()
 intents.message_content = True # NOQA
