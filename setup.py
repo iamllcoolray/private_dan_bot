@@ -21,7 +21,7 @@ setup(
         "License :: OSI Approved :: MIT License",  # Adjust if you're using a different license
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.7",  # Ensure the user has a compatible Python version
+    python_requires=">=3.9",  # Ensure the user has a compatible Python version
     entry_points={
         'console_scripts': [
             'run-bot = src/bot.main:run',  # Replace with the appropriate entry point if applicable
