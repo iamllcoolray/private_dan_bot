@@ -24,7 +24,7 @@ setup(
     python_requires=">=3.9",  # Ensure the user has a compatible Python version
     entry_points={
         'console_scripts': [
-            'private_dan_bot = private_dan_bot.bot:main',  # Replace with the appropriate entry point if applicable
+            'run = src.bot:main',  # Replace with the appropriate entry point if applicable
         ],
     },
 )
