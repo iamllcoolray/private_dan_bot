@@ -4,7 +4,7 @@ setup(
     name="private_dan_bot",  # Replace with your bot's name
     version="0.1.0",  # Start with a version number
     author="Oda Nobunaga",  # Your name or your team's name
-    author_email="llcoolray24@gmail.com",  # Your email address
+    author_email="iamllcoolray@gmail.com",  # Your email address
     description="A Discord Bot that responds to the server owner's messages ",
     long_description=open("README.md").read(),  # Reads your README file for long description
     long_description_content_type="text/markdown",
