@@ -1,54 +1,58 @@
-from typing import Final
 import os
-from discord import Intents, Client, Message, User
+from typing import Final, List
+import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 from bot_response import get_bot_response
 
 load_dotenv()
 TOKEN: Final[str] = os.getenv("DISCORD_TOKEN")
-TARGET_USER: Final[str] = os.getenv("TARGET_USER")
+TEST_GUILD_ID = os.getenv("GUILD_ID")
 
-intents: Intents = Intents.default()
-intents.message_content = True # NOQA
-# intents.messages = True
-# intents.guilds = True
-# intents.members = True
-client: Client = Client(intents=intents)
+# Sample autocomplete suggestions
+DAN_SUGGESTIONS = [
+    "Tell me a joke",
+    "What’s the weather like?",
+    "Give me a motivational quote",
+    "Who won the last World Cup?",
+    "Explain quantum computing simply"
+]
 
-async def send_message(message: Message, user_message: str) -> None:
-    if not user_message:
-        print("(Message was empty because intents were not enabled)")
-        return
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-    if is_private := user_message[0] == "?":
-        user_message = user_message[1:]
-    
+@bot.event
+async def on_ready():
+    print(f"{bot.user} is now running!")
     try:
-        response: str = get_bot_response(user_message=user_message)
-        response = f"{message.author.mention} {response}"
-        await message.author.send(response) if is_private else await message.channel.send(response)
-    except Exception as ex:
-        print(ex)
-            
-@client.event
-async def on_ready() -> None:
-    print(f"{client.user} is now running!")
-    
-@client.event
-async def on_message(message: Message) -> None:
-    if message.author == client.user:
-        return
-    
-    if message.author.name == TARGET_USER:
-        username: str = str(message.author)
-        user_message: str = message.content
-        channel: str = str(message.channel)
-        
-        print(f"[{channel}] {username}: {user_message}")
-        await send_message(message=message, user_message=user_message)
+        await bot.sync_commands()
+        print("Slash commands synced.")
+    except Exception as e:
+        print(f"Command sync failed: {e}")
 
-def main() -> None:
-    client.run(token=TOKEN)
-    
+
+# Autocomplete function
+async def message_autocomplete(ctx: discord.AutocompleteContext) -> List[str]:
+    print(f"Autocomplete invoked with value: '{ctx.value}'")
+    return [s for s in DAN_SUGGESTIONS if ctx.value.lower() in s.lower()]
+
+# Slash command using discord.Option with autocomplete
+@bot.slash_command(name="dan", description="Ask DAN something", guild_ids=[TEST_GUILD_ID])
+async def dan(
+    ctx: discord.ApplicationContext,
+    message: str = discord.Option(description="Your message", autocomplete=message_autocomplete)
+):
+    try:
+        print(f"/dan called by {ctx.author} with message: {message}")
+        response = get_bot_response(user_message=message)
+        await ctx.respond(f"{ctx.author.mention} {response}")
+    except Exception as e:
+        print(f"Error: {e}")
+        await ctx.respond("Something went wrong while processing your message.", ephemeral=True)
+
+def main():
+    bot.run(TOKEN)
+
 if __name__ == '__main__':
     main()
