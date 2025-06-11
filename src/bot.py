@@ -11,11 +11,11 @@ TEST_GUILD_ID = os.getenv("GUILD_ID")
 
 # Sample autocomplete suggestions
 DAN_SUGGESTIONS = [
-    "Tell me a joke",
-    "What’s the weather like?",
-    "Give me a motivational quote",
-    "Who won the last World Cup?",
-    "Explain quantum computing simply"
+    "Tell me a joke Private.",
+    "Dan! What’s a mobile suit?",
+    "Give me a motivational quote Private.",
+    "Dan! What is your rank?",
+    "Explain what you do here."
 ]
 
 intents = discord.Intents.default()
@@ -34,7 +34,6 @@ async def on_ready():
 
 # Autocomplete function
 async def message_autocomplete(ctx: discord.AutocompleteContext) -> List[str]:
-    print(f"Autocomplete invoked with value: '{ctx.value}'")
     return [s for s in DAN_SUGGESTIONS if ctx.value.lower() in s.lower()]
 
 # Slash command using discord.Option with autocomplete
@@ -44,7 +43,7 @@ async def dan(
     message: str = discord.Option(description="Your message", autocomplete=message_autocomplete)
 ):
     try:
-        print(f"/dan called by {ctx.author} with message: {message}")
+        print(f"/dan called in {ctx.channel} by {ctx.author} with message: {message}")
         response = get_bot_response(user_message=message)
         await ctx.respond(f"{ctx.author.mention} {response}")
     except Exception as e:
